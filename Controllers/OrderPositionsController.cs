@@ -11,112 +11,116 @@ using ShopApp.Models;
 
 namespace ShopApp.Controllers
 {
-    public class ProductsController : Controller
+    public class OrderPositionsController : Controller
     {
         private ShopContext db = new ShopContext();
 
-        // GET: Products
+        // GET: OrderPositions
         public ActionResult Index()
         {
-            var products = db.Products.Include(p => p.ProductCategory);
-            return View(products.ToList());
+            var orderPositions = db.OrderPositions.Include(o => o.order).Include(o => o.product);
+            return View(orderPositions.ToList());
         }
 
-        // GET: Products/Details/5
+        // GET: OrderPositions/Details/5
         public ActionResult Details(int? id)
         {
             if (id == null)
             {
                 return new HttpStatusCodeResult(HttpStatusCode.BadRequest);
             }
-            Product product = db.Products.Find(id);
-            if (product == null)
+            OrderPosition orderPosition = db.OrderPositions.Find(id);
+            if (orderPosition == null)
             {
                 return HttpNotFound();
             }
-            return View(product);
+            return View(orderPosition);
         }
 
-        // GET: Products/Create
+        // GET: OrderPositions/Create
         public ActionResult Create()
         {
-            ViewBag.ProductCategoryId = new SelectList(db.ProductCategories, "ProductCategoryId", "ProductCategoryName");
+            ViewBag.OrderId = new SelectList(db.Orders, "OrderId", "Name");
+            ViewBag.ProductID = new SelectList(db.Products, "ProductID", "ProductName");
             return View();
         }
 
-        // POST: Products/Create
+        // POST: OrderPositions/Create
         // To protect from overposting attacks, please enable the specific properties you want to bind to, for 
         // more details see https://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public ActionResult Create([Bind(Include = "ProductID,ProductName,ProductCategoryId,EAN,Price,Unit,Availability")] Product product)
+        public ActionResult Create([Bind(Include = "OrderPositionId,OrderId,ProductID,Quantity,OrderPrice")] OrderPosition orderPosition)
         {
             if (ModelState.IsValid)
             {
-                db.Products.Add(product);
+                db.OrderPositions.Add(orderPosition);
                 db.SaveChanges();
                 return RedirectToAction("Index");
             }
 
-            ViewBag.ProductCategoryId = new SelectList(db.ProductCategories, "ProductCategoryId", "ProductCategoryName", product.ProductCategoryId);
-            return View(product);
+            ViewBag.OrderId = new SelectList(db.Orders, "OrderId", "Name", orderPosition.OrderId);
+            ViewBag.ProductID = new SelectList(db.Products, "ProductID", "ProductName", orderPosition.ProductID);
+            return View(orderPosition);
         }
 
-        // GET: Products/Edit/5
+        // GET: OrderPositions/Edit/5
         public ActionResult Edit(int? id)
         {
             if (id == null)
             {
                 return new HttpStatusCodeResult(HttpStatusCode.BadRequest);
             }
-            Product product = db.Products.Find(id);
-            if (product == null)
+            OrderPosition orderPosition = db.OrderPositions.Find(id);
+            if (orderPosition == null)
             {
                 return HttpNotFound();
             }
-            ViewBag.ProductCategoryId = new SelectList(db.ProductCategories, "ProductCategoryId", "ProductCategoryName", product.ProductCategoryId);
-            return View(product);
+            ViewBag.OrderId = new SelectList(db.Orders, "OrderId", "Name", orderPosition.OrderId);
+            ViewBag.ProductID = new SelectList(db.Products, "ProductID", "ProductName", orderPosition.ProductID);
+            return View(orderPosition);
         }
 
-        // POST: Products/Edit/5
+        // POST: OrderPositions/Edit/5
         // To protect from overposting attacks, please enable the specific properties you want to bind to, for 
         // more details see https://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public ActionResult Edit([Bind(Include = "ProductID,ProductName,ProductCategoryId,EAN,Price,Unit,Availability")] Product product)
+        public ActionResult Edit([Bind(Include = "OrderPositionId,OrderId,ProductID,Quantity,OrderPrice")] OrderPosition orderPosition)
         {
             if (ModelState.IsValid)
             {
-                db.Entry(product).State = EntityState.Modified;
+                db.Entry(orderPosition).State = EntityState.Modified;
                 db.SaveChanges();
                 return RedirectToAction("Index");
             }
-            ViewBag.ProductCategoryId = new SelectList(db.ProductCategories, "ProductCategoryId", "ProductCategoryName", product.ProductCategoryId);
-            return View(product);
+            ViewBag.OrderId = new SelectList(db.Orders, "OrderId", "Name", orderPosition.OrderId);
+            ViewBag.ProductID = new SelectList(db.Products, "ProductID", "ProductName", orderPosition.ProductID);
+            return View(orderPosition);
         }
 
-        // GET: Products/Delete/5
+        // GET: OrderPositions/Delete/5
         public ActionResult Delete(int? id)
         {
             if (id == null)
             {
                 return new HttpStatusCodeResult(HttpStatusCode.BadRequest);
             }
-            Product product = db.Products.Find(id);
-            if (product == null)
+            OrderPosition orderPosition = db.OrderPositions.Find(id);
+            if (orderPosition == null)
             {
                 return HttpNotFound();
             }
-            return View(product);
+            return View(orderPosition);
         }
 
-        // POST: Products/Delete/5
+        // POST: OrderPositions/Delete/5
         [HttpPost, ActionName("Delete")]
         [ValidateAntiForgeryToken]
         public ActionResult DeleteConfirmed(int id)
         {
-            Product product = db.Products.Find(id);
-            db.Products.Remove(product);
+            OrderPosition orderPosition = db.OrderPositions.Find(id);
+            db.OrderPositions.Remove(orderPosition);
             db.SaveChanges();
             return RedirectToAction("Index");
         }
